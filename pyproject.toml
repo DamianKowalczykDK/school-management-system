@@ -1,0 +1,23 @@
+[project]
+name = "schoolmanagement"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Damian",email = "damiankowalczyk3688@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "dotenv (>=0.9.9,<0.10.0)",
+    "mysqlclient (>=2.2.7,<3.0.0)",
+    "sqlalchemy (>=2.0.44,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.18.2"
+
