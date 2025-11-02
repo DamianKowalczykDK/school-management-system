@@ -2,8 +2,6 @@ from sqlalchemy.orm import relationship, mapped_column, Mapped
 from sqlalchemy import ForeignKey, Integer, String
 from src.db.config import Base
 
-
-
 class School(Base):
     __tablename__ = 'schools'
 
@@ -30,9 +28,7 @@ class Student(Base):
     age: Mapped[int] = mapped_column(Integer, nullable=False)
     email: Mapped[str] = mapped_column(String(50), nullable=False)
 
-    school_id: Mapped[int] = mapped_column(Integer, ForeignKey('schools.id'), nullable=False)
     department_id: Mapped[int] = mapped_column(Integer, ForeignKey('departments.id'), nullable=False)
-
     department: Mapped[Department] = relationship(back_populates='students', lazy='select')
 
 
