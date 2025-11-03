@@ -1,9 +1,7 @@
-from enum import Enum
-
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from sqlalchemy import ForeignKey, Integer, String, Enum as SAEnum
-from src.db.config import Base
-
+from src.database.config import Base
+from enum import Enum
 
 class GenderEnum(Enum):
     MALE = 'Male'
@@ -16,6 +14,9 @@ class School(Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False)
 
     departments: Mapped[list['Department']] = relationship(back_populates='school', lazy='select')
+
+    def __repr__(self):
+        return f'School({self.name})'
 
 class Department(Base):
     __tablename__ = 'departments'

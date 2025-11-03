@@ -1,10 +1,10 @@
 from sqlalchemy import Engine, select, func
 from sqlalchemy.orm import Session, joinedload
 from contextlib import contextmanager
-from src.db.config import Base
-from typing import Type, Generator, cast
-from src.db.config import logger
-from src.model import School, Department, Student, GenderEnum
+from src.database.config import Base
+from typing import Type, Generator
+from src.database.config import logger
+from src.domain.model import School, Department, Student, GenderEnum
 
 
 class GenericRepository[T: Base]:
@@ -66,11 +66,28 @@ class SchoolRepository(GenericRepository[School]):
     def __init__(self, engine: Engine | None = None, expire_on_commit: bool = True) -> None:
         super().__init__(School, engine, expire_on_commit)
 
+    def get_schools_by_students_count(self, session: Session | None = None) -> list[tuple[School, int]]:
+        with self._get_session(session, commit=True) as s:
+            stmt = (
+                select(School, func.count(Student.id).label('count_student'))
+                .outerjoin(School.departments)
+                .outerjoin(Department.students)
+                .group_by(School.id)
+                .order_by(func.count(Student.id).desc())
+            )
+            result = s.execute(stmt).all()
+            return [(school, count) for school, count in result]
+
+    def get_all_with_departments(self, session: Session | None = None) -> list[School]:
+        with self._get_session(session, commit=True) as s:
+            stmt = select(School).options(joinedload(School.departments))
+            return list(s.scalars(stmt).unique().all())
+
 class DepartmentRepository(GenericRepository[Department]):
     def __init__(self, engine: Engine | None = None, expire_on_commit: bool = True) -> None:
         super().__init__(Department, engine, expire_on_commit)
 
-    def get_department(self, session: Session | None = None) -> list[tuple[Department, int]]:
+    def get_departments_with_student_count(self, session: Session | None = None) -> list[tuple[Department, int]]:
         with self._get_session(session) as s:
             stmt = (
                 select(Department, func.count(Student.id).label('count_student'))
@@ -86,17 +103,21 @@ class StudentRepository(GenericRepository[Student]):
     def __init__(self, engine: Engine | None = None, expire_on_commit: bool = True) -> None:
         super().__init__(Student, engine, expire_on_commit)
 
-    def find_student_by_email(self, email: str, session: Session | None = None) -> Student | None:
+    def get_student_by_email(self, email: str, session: Session | None = None) -> Student | None:
         with self._get_session(session, commit=True) as s:
             stmt = select(Student).where(Student.email == email)
-            return s.scalar(stmt)
+            student = s.scalar(stmt)
+            if student is None:
+                raise ValueError('Student not found')
+            return student
 
-    def find_student_age_between(self, min_age: int, max_age:int, session: Session | None = None) -> list[Student]:
+
+    def get_student_age_between(self, min_age: int, max_age:int, session: Session | None = None) -> list[Student]:
         with self._get_session(session, commit=True) as s:
             stmt = select(Student).where(Student.age.between(min_age, max_age))
             return list(s.scalars(stmt).all())
 
-    def get_gender(self, gender: GenderEnum, session: Session | None = None) -> list[Student]:
+    def get_students_by_gender(self, gender: GenderEnum, session: Session | None = None) -> list[Student]:
         with self._get_session(session, commit=True) as s:
             stmt = select(Student).where(Student.gender == gender)
             return list(s.scalars(stmt).all())
