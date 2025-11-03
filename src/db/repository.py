@@ -77,7 +77,6 @@ class DepartmentRepository(GenericRepository[Department]):
                 .outerjoin(Department.students)
                 .group_by(Department.id)
                 .order_by(func.count(Student.id).desc())
-                .limit(3)
             )
             result = s.execute(stmt).all()
             return [(dep, count) for dep, count in result]
