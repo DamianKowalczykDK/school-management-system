@@ -7,7 +7,30 @@ from sqlalchemy import Engine, create_engine
 
 from src.database.config import Base
 from src.database.repository import SchoolRepository, DepartmentRepository, StudentRepository
+from src.domain.model import School, Department, Student, GenderEnum
 
+
+@pytest.fixture
+def school_1() -> School:
+    return School(name='Harvard University')
+
+@pytest.fixture
+def school_2() -> School:
+    return School(name='Oxford University')
+
+@pytest.fixture
+def department_1(school_1: School) -> Department:
+    return Department(name='Biology', school=school_1)
+
+@pytest.fixture
+def student_1(department_1: Department) -> Student:
+    return Student(
+        first_name='Jon',
+        last_name='Smith',
+        gender=GenderEnum.MALE,
+        age=20,email='js@example.com',
+        department=department_1
+    )
 
 @pytest.fixture(scope='session')
 def mysql_container_engine() -> Generator[Engine, None, None]:

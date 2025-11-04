@@ -34,49 +34,26 @@ def main() -> None:
         department_id=3,
     )
 
-    # school_repo = SchoolRepository(engine=sync_engine)
-    # school_repo.save_all([school1, school2])
-    #
-    # with Session(sync_engine) as s:
-    #     department_repo = DepartmentRepository(engine=sync_engine)
-    #     # department_repo.save_all([department1, department2, department3, department4])
-    #     dep = department_repo.popular_department(session=s)
-    #     for d in dep:
-    #         print(d)
-
-    # students_repo = StudentRepository(engine=sync_engine)
-    # students_repo.save_all([student1, student2])
-
-    student_repo = StudentRepository(engine=sync_engine, expire_on_commit=False)
-    # stud = student_repo.find_student_by_email('JS@example.com')
-    # print(stud)
-    # students = student_repo.find_student_age_between(21,31)
-    # for stud in students:
-    #     print(stud)
-
-    # department_repo = DepartmentRepository(engine=sync_engine, expire_on_commit=False)
-    # dep = department_repo.get_department()
-    # if dep is not None:
-    #     for d in dep:
-    #         print(f'{d}')
-
-    # school = school_repo.get_most_students()
-    # for student in school:
-    #     print(student)
-    # schools = school_repo.get_all_with_departments()
-    # for school in schools:
-    #     print(f'School: {school.name}, {school.departments}')
-
 
     student_repo = StudentRepository(engine=sync_engine, expire_on_commit=False)
     department_repo = DepartmentRepository(engine=sync_engine, expire_on_commit=False)
     school_repo = SchoolRepository(engine=sync_engine, expire_on_commit=False)
 
-    school_management_service = SchoolManagementService(school_repo=school_repo, student_repo=student_repo, department_repo=department_repo)
-    # print(school_management_service.most_popular_department())
-    # print(school_management_service.students_by_gender(gender=GenderEnum.MALE))
-    # print(school_management_service.school_with_all_departments())
-    # print(school_management_service.find_student_between_age_range(26, 40))
+    school_management_service = SchoolManagementService(
+        school_repo=school_repo,
+        student_repo=student_repo,
+        department_repo=department_repo
+    )
+
+    print('--------------- [1] ---------------')
+    print(school_management_service.most_popular_department())
+    print('--------------- [2] ---------------')
+    print(school_management_service.find_students_by_gender(gender=GenderEnum.MALE))
+    print('--------------- [3] ---------------')
+    print(school_management_service.schools_with_all_departments())
+    print('--------------- [4] ---------------')
+    print(school_management_service.find_student_between_age_range(26, 40))
+    print('--------------- [5] ---------------')
     print(school_management_service.find_student_by_email("JS@example.com"))
 
 
