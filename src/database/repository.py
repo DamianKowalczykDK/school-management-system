@@ -66,6 +66,11 @@ class SchoolRepository(GenericRepository[School]):
     def __init__(self, engine: Engine | None = None, expire_on_commit: bool = True) -> None:
         super().__init__(School, engine, expire_on_commit)
 
+    def find_by_name(self, name: str, session: Session | None = None) -> School | None:
+        with self._get_session(session, commit=True) as s:
+            stmt = select(School).where(School.name == name)
+            return s.scalar(stmt)
+
     def get_schools_by_students_count(self, session: Session | None = None) -> list[tuple[School, int]]:
         with self._get_session(session, commit=True) as s:
             stmt = (

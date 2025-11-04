@@ -60,7 +60,6 @@ def main() -> None:
     #     for d in dep:
     #         print(f'{d}')
 
-    school_repo = SchoolRepository(engine=sync_engine, expire_on_commit=False)
     # school = school_repo.get_most_students()
     # for student in school:
     #     print(student)
@@ -71,13 +70,14 @@ def main() -> None:
 
     student_repo = StudentRepository(engine=sync_engine, expire_on_commit=False)
     department_repo = DepartmentRepository(engine=sync_engine, expire_on_commit=False)
+    school_repo = SchoolRepository(engine=sync_engine, expire_on_commit=False)
 
     school_management_service = SchoolManagementService(school_repo=school_repo, student_repo=student_repo, department_repo=department_repo)
     # print(school_management_service.most_popular_department())
     # print(school_management_service.students_by_gender(gender=GenderEnum.MALE))
     # print(school_management_service.school_with_all_departments())
     # print(school_management_service.find_student_between_age_range(26, 40))
-    print(school_management_service.find_student_by_email("JSd@example.com"))
+    print(school_management_service.find_student_by_email("JS@example.com"))
 
 
 
