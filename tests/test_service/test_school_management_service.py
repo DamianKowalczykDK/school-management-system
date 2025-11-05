@@ -120,7 +120,7 @@ def test_find_student_by_email_if_not_student(
 ) -> None:
     with caplog.at_level(logging.INFO):
         mock_student_repository.get_student_by_email.return_value = None
-        result = mock_school_management_service.find_student_by_email('js@example.com')
+        mock_school_management_service.find_student_by_email('js@example.com')
 
     assert 'No student found' in caplog.text
 
