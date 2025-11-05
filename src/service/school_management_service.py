@@ -57,7 +57,7 @@ class SchoolManagementService:
     def find_student_by_email(self, email: str) -> StudentDTO | None:
         students = self.student_repo.get_student_by_email(email)
         if not students:
-            logger.info("No students found")
+            logger.info("No student found")
             return None
         return StudentDTO.from_entity(students)
 
