@@ -1,38 +1,38 @@
-from src.database.config import sync_engine, Base
 from src.database.repository import SchoolRepository, StudentRepository, DepartmentRepository
-from src.domain.model import School, Department, Student, GenderEnum
 from src.service.school_management_service import SchoolManagementService
+from src.domain.model import School, Department, Student, GenderEnum
+from src.database.config import sync_engine, Base
 
 
 def main() -> None:
     Base.metadata.create_all(sync_engine)
 
-    school1 = School(name='Harvard University')
-    school2 = School(name='Cambridge University')
-
-    department1 = Department(name='Mathematics', school=school1, school_id=1)
-    department2 = Department(name='Biology', school=school1, school_id=1)
-    department3 = Department(name='Informatica', school=school2, school_id=2)
-    department4 = Department(name='Chemistry', school=school2, school_id=2)
-
-    student1 = Student(
-        first_name='John',
-        last_name='Smith',
-        gender=GenderEnum.MALE,
-        age=30,
-        email='JS@example.com',
-        department=department1,
-        department_id=1,
-    )
-    student2 = Student(
-        first_name='Jon',
-        last_name='Doe',
-        gender=GenderEnum.MALE,
-        age=25,
-        email='JD@example.com',
-        department=department3,
-        department_id=3,
-    )
+    # school1 = School(name='Harvard University')
+    # school2 = School(name='Cambridge University')
+    #
+    # department1 = Department(name='Mathematics', school=school1, school_id=1)
+    # department2 = Department(name='Biology', school=school1, school_id=1)
+    # department3 = Department(name='Informatica', school=school2, school_id=2)
+    # department4 = Department(name='Chemistry', school=school2, school_id=2)
+    #
+    # student1 = Student(
+    #     first_name='John',
+    #     last_name='Smith',
+    #     gender=GenderEnum.MALE,
+    #     age=30,
+    #     email='JS@example.com',
+    #     department=department1,
+    #     department_id=1,
+    # )
+    # student2 = Student(
+    #     first_name='Jon',
+    #     last_name='Doe',
+    #     gender=GenderEnum.MALE,
+    #     age=25,
+    #     email='JD@example.com',
+    #     department=department3,
+    #     department_id=3,
+    # )
 
 
     student_repo = StudentRepository(engine=sync_engine, expire_on_commit=False)
@@ -55,13 +55,15 @@ def main() -> None:
     print(school_management_service.find_student_between_age_range(26, 40))
     print('--------------- [5] ---------------')
     print(school_management_service.find_student_by_email("JS@example.com"))
-
-
-
-
-
-
-
+    # school_management_service.add_student_to_school(
+    #     school='Harvard University',
+    #     department='Biology',
+    #     first_name='Tom',
+    #     last_name='Jones',
+    #     gender=GenderEnum.MALE,
+    #     age=18,
+    #     email='tom@example.com'
+    # )
 
 if __name__ == '__main__':
     main()

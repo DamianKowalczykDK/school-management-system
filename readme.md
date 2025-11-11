@@ -99,7 +99,6 @@ Core functionalities:
 
 🎓 School Management
 
-- Add, retrieve, update, and delete schools using the GenericRepository base methods
 - Fetch schools along with their departments via get_all_with_departments()
 
 🏛️ Department Management
@@ -117,6 +116,10 @@ Core functionalities:
 📊 Analytical & Reporting Functions
 
 - Most popular departments by student count
+
+⚙️ Core CRUD Operations
+- Schools, departments, and students can be added, retrieved, updated, and deleted.
+- All entities are managed through the service layer with proper business rules.
 
 Students filtered and transformed into DTO objects for presentation
 

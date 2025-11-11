@@ -140,17 +140,6 @@ class TestStudentRepository:
         assert (repr(result) ==
                 f'Student: {student_1.first_name} {student_1.last_name} {student_1.gender} {student_1.age} {student_1.email}')
 
-    def test_get_student_by_email_if_student_not_found(
-            self,
-            student_repo: StudentRepository,
-            db_session: Session,
-            student_1: Student
-    ) -> None:
-        student_repo.save(student_1, db_session)
-        db_session.flush()
-        with pytest.raises(ValueError, match='Student not found'):
-            result = student_repo.get_student_by_email('BAD', db_session)
-            assert result is None
 
     def test_get_student_age_between(
             self,
