@@ -109,7 +109,7 @@ class TestSchoolRepository:
         assert school_result.name == school_1.name
         assert count == 1
 
-
+class TestDepartmentRepository:
     def test_get_departments_with_student_count(
             self,
             department_repo: DepartmentRepository,
@@ -128,6 +128,14 @@ class TestSchoolRepository:
         assert department_result.name == department_1.name
         assert count_student == 1
         assert repr(department_result) == f'Department: {department_1.name}'
+
+    def test_find_by_name(self, department_repo: DepartmentRepository, department_1: Department, db_session: Session) -> None:
+        department_repo.save(department_1, db_session)
+        db_session.flush()
+        result = department_repo.get_find_by_name(department_1.name, db_session)
+        assert result is not None
+        assert result.name == department_1.name
+
 
 class TestStudentRepository:
     def test_get_student_by_email(self, student_repo: StudentRepository, db_session: Session, student_1: Student) -> None:
@@ -164,6 +172,26 @@ class TestStudentRepository:
         result = student_repo.get_students_by_gender(GenderEnum.MALE, db_session)
         assert result is not None
         assert result[0].gender == student_1.gender
+
+    def test_get_student_by_department(
+            self,
+            student_repo: StudentRepository,
+            department_repo: DepartmentRepository,
+            department_1: Department,
+            student_1: Student,
+            db_session: Session
+    ) -> None:
+
+        student_repo.save(student_1, db_session)
+        department_repo.save(department_1, db_session)
+        db_session.flush()
+
+        result = student_repo.get_student_by_department(student_1.email, department_1.name, db_session)
+        assert result is not None
+
+        assert result.email == student_1.email
+        assert result.department.name == department_1.name
+
 
 
 
