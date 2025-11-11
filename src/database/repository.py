@@ -217,6 +217,22 @@ class DepartmentRepository(GenericRepository[Department]):
             result = s.execute(stmt).all()
             return [(dep, count) for dep, count in result]
 
+    def get_find_by_name(self, name: str, session: Session | None = None) -> Department | None:
+        """
+        Retrieves a department by its name.
+
+        Args:
+            name (str): The name of the department to search for.
+            session (Session | None, optional): Existing SQLAlchemy session to use.
+                If None, a new session is created and committed automatically.
+
+        Returns:
+            Department | None: The matching Department object if found, otherwise None.
+        """
+        with self._get_session(session, commit=True) as s:
+            stmt = select(Department).where(Department.name == name)
+            return s.scalar(stmt)
+
 
 class StudentRepository(GenericRepository[Student]):
     """Repository for managing `Student` entities."""
@@ -240,10 +256,7 @@ class StudentRepository(GenericRepository[Student]):
         """
         with self._get_session(session, commit=True) as s:
             stmt = select(Student).where(Student.email == email)
-            student = s.scalar(stmt)
-            if student is None:
-                raise ValueError('Student not found')
-            return student
+            return s.scalar(stmt)
 
     def get_student_age_between(self, min_age: int, max_age: int, session: Session | None = None) -> list[Student]:
         """Finds all students whose ages fall within a given range.
@@ -273,3 +286,25 @@ class StudentRepository(GenericRepository[Student]):
         with self._get_session(session, commit=True) as s:
             stmt = select(Student).where(Student.gender == gender)
             return list(s.scalars(stmt).all())
+
+    def get_student_by_department(self, student_email: str, department_name: str, session: Session | None = None) -> Student | None:
+        """
+        Retrieves a student based on their email and department name.
+
+        Args:
+            student_email (str): The email address of the student.
+            department_name (str): The name of the department to search in.
+            session (Session | None, optional): Existing SQLAlchemy session, if provided.
+                A new session is created if None.
+
+        Returns:
+            Student | None: The matching Student object if found, otherwise None.
+        """
+        with self._get_session(session, commit=True) as s:
+            stmt = (
+                select(Student)
+                .outerjoin(Department)
+                .where(Student.email == student_email)
+                .where(Department.name == department_name)
+            )
+            return s.scalar(stmt)
