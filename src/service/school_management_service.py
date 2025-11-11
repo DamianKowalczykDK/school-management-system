@@ -108,6 +108,15 @@ class SchoolManagementService:
         return StudentDTO.from_entity(student)
 
     def add_school(self, school: str) -> None:
+        """
+        Adds a new school to the system.
+
+        Args:
+            school (str): Name of the school to add.
+
+        Raises:
+            ValueError: If a school with the same name already exists.
+        """
         existing_school = self.school_repo.find_by_name(school)
         if existing_school:
             logger.info("School already exists")
@@ -116,6 +125,16 @@ class SchoolManagementService:
         self.school_repo.save(new_school)
 
     def add_department_to_school(self, school: str, department: str) -> None:
+        """
+        Adds a new department to an existing school.
+
+        Args:
+            school (str): Name of the school to which the department will be added.
+            department (str): Name of the department to add.
+
+        Raises:
+            ValueError: If the school does not exist or the department already exists.
+        """
         existing_school = self.school_repo.find_by_name(school)
         if not existing_school:
             logger.error('School does not exist')
@@ -138,6 +157,22 @@ class SchoolManagementService:
             age: int,
             email: str,
     ) -> None:
+        """
+        Adds a new student to a specific department of a school.
+
+        Args:
+            school (str): Name of the school.
+            department (str): Name of the department.
+            first_name (str): Student's first name.
+            last_name (str): Student's last name.
+            gender (GenderEnum): Student's gender.
+            age (int): Student's age.
+            email (str): Student's email address.
+
+        Raises:
+            ValueError: If the school or department does not exist, or the student
+                        is already enrolled in the department.
+        """
         existing_school = self.school_repo.find_by_name(school)
         if not existing_school:
             logger.error('School does not exist')
@@ -148,12 +183,10 @@ class SchoolManagementService:
             logger.error('Department does not exist')
             raise ValueError('Department does not exist')
 
-
         existing_student = self.student_repo.get_student_by_department(email, department)
         if existing_student:
             logger.error('Student already exists')
             raise ValueError('Student already exists')
-
 
         new_student = Student(
             first_name=first_name,
@@ -162,7 +195,6 @@ class SchoolManagementService:
             age=age,
             email=email,
             department_id=existing_department.id
-
         )
 
         self.student_repo.save(new_student)
