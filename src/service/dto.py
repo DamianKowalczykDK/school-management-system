@@ -79,7 +79,7 @@ class SchoolDepartmentDTO:
     """
 
     name: str
-    department: list[Department]
+    department: list[str]
 
     @classmethod
     def from_entity(cls, school: School) -> Self:
@@ -93,7 +93,7 @@ class SchoolDepartmentDTO:
         """
         return cls(
             name=school.name,
-            department=school.departments
+            department=[dep.name for dep in school.departments]
         )
 
 
